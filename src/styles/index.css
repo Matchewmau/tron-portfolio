@@ -154,14 +154,194 @@
   animation: grid-travel 6s linear infinite;
 }
 
+/* Refined Intermittent Tron Digital Glitch Typography (Crisp 92% of cycle, sharp slice burst) */
+.tron-glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.tron-glitch::before,
+.tron-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.tron-glitch::before {
+  color: #38d9f5;
+  z-index: -1;
+}
+
+.tron-glitch::after {
+  color: #fb923c;
+  z-index: -2;
+}
+
+@keyframes tron-glitch-cyan-slice {
+  0%,
+  88%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+  89% {
+    opacity: 0.85;
+    transform: translate(-2.5px, -1px);
+    clip-path: inset(12% 0 62% 0);
+  }
+  91% {
+    opacity: 0.85;
+    transform: translate(2.5px, 0);
+    clip-path: inset(58% 0 14% 0);
+  }
+  93% {
+    opacity: 0.75;
+    transform: translate(-1.5px, 1px);
+    clip-path: inset(32% 0 42% 0);
+  }
+  95% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes tron-glitch-amber-slice {
+  0%,
+  88%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+  89.5% {
+    opacity: 0.75;
+    transform: translate(2.5px, 1px);
+    clip-path: inset(64% 0 8% 0);
+  }
+  91.5% {
+    opacity: 0.75;
+    transform: translate(-2px, 0);
+    clip-path: inset(18% 0 56% 0);
+  }
+  94% {
+    opacity: 0.65;
+    transform: translate(1.5px, -1px);
+    clip-path: inset(44% 0 28% 0);
+  }
+  95.5% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+}
+
+.tron-glitch-hero::before {
+  animation: tron-glitch-cyan-slice 5.2s infinite linear;
+}
+
+.tron-glitch-hero::after {
+  animation: tron-glitch-amber-slice 5.2s infinite linear;
+}
+
+.tron-glitch-header::before {
+  animation: tron-glitch-cyan-slice 8.5s infinite linear;
+}
+
+.tron-glitch-header::after {
+  animation: tron-glitch-amber-slice 8.5s infinite linear;
+}
+
+/* Faster Beat-Synced Glitch Cadence When "End of Line" Music Is Playing */
+.tron-glitch-synced.tron-glitch-hero::before {
+  animation-duration: 2.07s;
+}
+
+.tron-glitch-synced.tron-glitch-hero::after {
+  animation-duration: 2.07s;
+}
+
+.tron-glitch-synced.tron-glitch-header::before {
+  animation-duration: 4.14s;
+}
+
+.tron-glitch-synced.tron-glitch-header::after {
+  animation-duration: 4.14s;
+}
+
+/* Instant Subtle Micro-Glitch on Hover */
+.tron-glitch:hover::before {
+  animation: tron-glitch-cyan-slice 0.9s infinite linear;
+}
+
+.tron-glitch:hover::after {
+  animation: tron-glitch-amber-slice 0.9s infinite linear;
+}
+
+/* Mini Equalizer Bars for Navbar "End of Line" Player */
+@keyframes eq-bounce-1 {
+  0%,
+  100% {
+    height: 4px;
+  }
+  50% {
+    height: 14px;
+  }
+}
+
+@keyframes eq-bounce-2 {
+  0%,
+  100% {
+    height: 13px;
+  }
+  50% {
+    height: 5px;
+  }
+}
+
+@keyframes eq-bounce-3 {
+  0%,
+  100% {
+    height: 7px;
+  }
+  50% {
+    height: 15px;
+  }
+}
+
+.eq-bar-1 {
+  animation: eq-bounce-1 0.52s ease-in-out infinite;
+}
+
+.eq-bar-2 {
+  animation: eq-bounce-2 0.44s ease-in-out infinite;
+}
+
+.eq-bar-3 {
+  animation: eq-bounce-3 0.6s ease-in-out infinite;
+}
+
 /* Reduced Motion Respect */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
-  .tron-perspective-plane {
+  .tron-perspective-plane,
+  .tron-glitch::before,
+  .tron-glitch::after,
+  .eq-bar-1,
+  .eq-bar-2,
+  .eq-bar-3 {
     animation: none !important;
+  }
+
+  .tron-glitch::before,
+  .tron-glitch::after {
+    display: none !important;
   }
 
   .group:hover .laser-scan-line {

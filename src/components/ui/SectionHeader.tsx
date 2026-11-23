@@ -1,3 +1,5 @@
+import { GlitchText } from './GlitchText';
+
 interface SectionHeaderProps {
   indexCode: string;
   protocol: string;
@@ -25,9 +27,12 @@ export function SectionHeader({
           aria-hidden="true"
         />
       </div>
-      <h2 className="font-display text-2xl font-semibold tracking-wide text-[#F1F6FA] sm:text-3xl md:text-[2.15rem]">
-        {title}
-      </h2>
+      <GlitchText
+        as="h2"
+        intensity="header"
+        text={title}
+        className="font-display text-2xl font-semibold tracking-wide text-[#F1F6FA] sm:text-3xl md:text-[2.15rem]"
+      />
       {subtitle && (
         <p className="mt-3 max-w-2xl font-sans text-base leading-relaxed text-[#A3BACB]">
           {subtitle}

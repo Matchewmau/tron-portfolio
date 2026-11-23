@@ -4,6 +4,7 @@ import { portfolioData } from '../../data/portfolioData';
 import { IdentityDisc } from '../canvas/IdentityDisc';
 import { ChamferButton } from '../ui/ChamferButton';
 import { ChamferCard } from '../ui/ChamferCard';
+import { GlitchText } from '../ui/GlitchText';
 import { NeonBadge } from '../ui/NeonBadge';
 
 export function HeroIdentity() {
@@ -17,7 +18,7 @@ export function HeroIdentity() {
       className="relative mx-auto max-w-6xl px-4 pb-20 pt-12 sm:px-6 md:pb-24 md:pt-16 lg:px-8"
     >
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-10">
-        {/* Left Column: Clean, High-Legibility Identity Intro */}
+        {/* Left Column: Clean, High-Legibility Identity Intro with Glitch Hero Title */}
         <motion.div
           initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -33,13 +34,14 @@ export function HeroIdentity() {
             <NeonBadge accent="orange">CSC Professional Eligible</NeonBadge>
           </div>
 
-          {/* Primary Name */}
-          <h1
+          {/* Primary Name with Intermittent Tron Digital Glitch */}
+          <GlitchText
+            as="h1"
             id="hero-heading"
+            intensity="hero"
+            text={identity.fullName}
             className="font-display text-3xl font-bold leading-tight tracking-wide text-[#F1F6FA] sm:text-4xl md:text-5xl"
-          >
-            {identity.fullName}
-          </h1>
+          />
 
           {/* Role / Designation */}
           <p className="mt-3 font-sans text-lg font-medium text-[#7CE7FA] sm:text-xl">
@@ -87,7 +89,7 @@ export function HeroIdentity() {
           </div>
         </motion.div>
 
-        {/* Right Column: Portrait inside Tron Identity Disc */}
+        {/* Right Column: Portrait inside Authentic Tron Identity Disc */}
         <motion.div
           initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}

@@ -16,7 +16,7 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-// Mock IntersectionObserver for Framer Motion whileInView
+// Mock IntersectionObserver for Framer Motion whileInView & HudNavbar active section spy
 class MockIntersectionObserver {
   observe = vi.fn();
   unobserve = vi.fn();
@@ -29,7 +29,40 @@ Object.defineProperty(window, 'IntersectionObserver', {
   value: MockIntersectionObserver,
 });
 
-// Mock Web Audio API AudioContext for zero-dependency synth tests
+// Mock Canvas 2D Context for TheGridFloor, SynthWaveVisualizer & IdentityDisc radial canvas
+const mockCanvas2DContext = {
+  clearRect: vi.fn(),
+  fillRect: vi.fn(),
+  beginPath: vi.fn(),
+  closePath: vi.fn(),
+  moveTo: vi.fn(),
+  lineTo: vi.fn(),
+  arc: vi.fn(),
+  stroke: vi.fn(),
+  fill: vi.fn(),
+  save: vi.fn(),
+  restore: vi.fn(),
+  translate: vi.fn(),
+  rotate: vi.fn(),
+  setLineDash: vi.fn(),
+  setTransform: vi.fn(),
+  createRadialGradient: vi.fn(() => ({
+    addColorStop: vi.fn(),
+  })),
+  createLinearGradient: vi.fn(() => ({
+    addColorStop: vi.fn(),
+  })),
+  fillStyle: '',
+  strokeStyle: '',
+  lineWidth: 1,
+};
+
+Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+  writable: true,
+  value: vi.fn(() => mockCanvas2DContext),
+});
+
+// Mock Web Audio API AudioContext, AnalyserNode, and BiquadFilterNode
 class MockOscillator {
   type: OscillatorType = 'sine';
   frequency = {
@@ -43,10 +76,31 @@ class MockOscillator {
 
 class MockGain {
   gain = {
+    value: 0.001,
+    setValueAtTime: vi.fn(),
+    linearRampToValueAtTime: vi.fn(),
+    exponentialRampToValueAtTime: vi.fn(),
+    cancelScheduledValues: vi.fn(),
+  };
+  connect = vi.fn();
+}
+
+class MockBiquadFilter {
+  type: BiquadFilterType = 'lowpass';
+  Q = { setValueAtTime: vi.fn() };
+  frequency = {
     setValueAtTime: vi.fn(),
     exponentialRampToValueAtTime: vi.fn(),
   };
   connect = vi.fn();
+}
+
+class MockAnalyser {
+  fftSize = 512;
+  smoothingTimeConstant = 0.8;
+  connect = vi.fn();
+  getByteFrequencyData = vi.fn((arr: Uint8Array) => arr.fill(64));
+  getByteTimeDomainData = vi.fn((arr: Uint8Array) => arr.fill(128));
 }
 
 class MockAudioContext {
@@ -56,7 +110,24 @@ class MockAudioContext {
   resume = vi.fn().mockResolvedValue(undefined);
   createOscillator = vi.fn(() => new MockOscillator());
   createGain = vi.fn(() => new MockGain());
+  createBiquadFilter = vi.fn(() => new MockBiquadFilter());
+  createAnalyser = vi.fn(() => new MockAnalyser());
+  createMediaElementSource = vi.fn(() => ({
+    connect: vi.fn(),
+  }));
 }
+
+Object.defineProperty(HTMLMediaElement.prototype, 'play', {
+  writable: true,
+  configurable: true,
+  value: vi.fn().mockResolvedValue(undefined),
+});
+
+Object.defineProperty(HTMLMediaElement.prototype, 'pause', {
+  writable: true,
+  configurable: true,
+  value: vi.fn(),
+});
 
 Object.defineProperty(window, 'AudioContext', {
   writable: true,

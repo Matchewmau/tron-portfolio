@@ -37,27 +37,41 @@ describe('Into the Grid — Refined Tron Portfolio', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('renders user portrait, projects with cover previews, skills, credentials, and sound toggle', () => {
+  it('renders disc outer synthwave canvas, illuminated About nav link, lowered volume slider, and projects', () => {
     sessionStorage.setItem(BOOT_STORAGE_KEY, 'true');
     render(<App />);
 
-    // Portrait & Hero Identity
-    expect(
-      screen.getByRole('heading', { name: /John Mathew B\. Mauricio/i })
-    ).toBeInTheDocument();
+    // Glitch Hero Heading, Horizon SynthWave Canvas & Identity Disc Radial SynthWave Canvas
+    const heroHeading = screen.getByRole('heading', { name: /John Mathew B\. Mauricio/i });
+    expect(heroHeading).toBeInTheDocument();
+    expect(heroHeading).toHaveAttribute('data-text', 'John Mathew B. Mauricio');
+    expect(screen.getByTestId('synth-wave-canvas')).toBeInTheDocument();
+    expect(screen.getByTestId('disc-synthwave-canvas')).toBeInTheDocument();
+
+    // Illuminated Active "About" Navigation Link
+    const aboutLink = screen.getByRole('link', { name: 'About' });
+    expect(aboutLink).toHaveAttribute('aria-current', 'location');
+
+    // Lowered Default Music Volume Slider (~0.16)
+    const volumeSlider = screen.getByLabelText('Music volume') as HTMLInputElement;
+    expect(parseFloat(volumeSlider.value)).toBeCloseTo(0.16, 2);
+    fireEvent.change(volumeSlider, { target: { value: '0.10' } });
+    expect(parseFloat(volumeSlider.value)).toBeCloseTo(0.1, 2);
+
+    // Portrait & Role
     expect(screen.getByAltText('John Mathew B. Mauricio')).toBeInTheDocument();
     expect(
       screen.getByText(/Web Developer \| Programmer \| AI Researcher/i)
     ).toBeInTheDocument();
 
-    // Sound Synthesizer toggle starts muted and toggles cleanly
-    const audioBtn = screen.getByRole('button', { name: /enable ui sound effects/i });
+    // "End of Line" Soundtrack toggle starts paused and activates cleanly
+    const audioBtn = screen.getByRole('button', { name: /play end of line soundtrack/i });
     expect(audioBtn).toHaveAttribute('aria-pressed', 'false');
     fireEvent.click(audioBtn);
-    expect(screen.getByRole('button', { name: /mute ui sound effects/i })).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
+    expect(
+      screen.getByRole('button', { name: /pause end of line soundtrack/i })
+    ).toHaveAttribute('aria-pressed', 'true');
+    expect(heroHeading.className).toContain('tron-glitch-synced');
 
     // Project Cards & Cover Previews
     expect(screen.getByRole('heading', { name: 'HairMixer' })).toBeInTheDocument();

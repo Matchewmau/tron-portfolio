@@ -1,10 +1,15 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, createRef, useContext, type ReactNode } from 'react';
 import { useTronAudio, type TronAudioControls } from '../hooks/useTronAudio';
 
 const noop = () => {};
+const defaultAnalyserRef = createRef<AnalyserNode | null>();
 
 const TronAudioContext = createContext<TronAudioControls>({
   isEnabled: false,
+  volume: 0.16,
+  setVolume: noop,
+  trackMode: 'mp3',
+  analyserRef: defaultAnalyserRef,
   toggleAudio: noop,
   playHover: noop,
   playClick: noop,
