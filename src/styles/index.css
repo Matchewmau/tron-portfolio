@@ -1,0 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --grid-void: #02060b;
+  --grid-panel: rgba(7, 19, 29, 0.75);
+  --grid-cyan: #00f0ff;
+  --grid-cyan-border: rgba(0, 240, 255, 0.25);
+  --grid-orange: #ff6b00;
+  --grid-orange-border: rgba(255, 107, 0, 0.4);
+  --grid-text: #e2f1f8;
+  --grid-muted: #8baec4;
+}
+
+@layer base {
+  html {
+    background-color: var(--grid-void);
+    color: var(--grid-text);
+    font-family: 'JetBrains Mono', monospace;
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: var(--grid-void);
+    color: var(--grid-text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--grid-cyan);
+    outline-offset: 3px;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #02060b;
+  border-left: 1px solid rgba(0, 240, 255, 0.12);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.35);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.7);
+}
+
+/* Signature 45-degree Chamfered Geometry */
+.clip-chamfer {
+  clip-path: polygon(
+    16px 0,
+    100% 0,
+    100% calc(100% - 16px),
+    calc(100% - 16px) 100%,
+    0 100%,
+    0 16px
+  );
+}
+
+.clip-chamfer-sm {
+  clip-path: polygon(
+    10px 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    0 100%,
+    0 10px
+  );
+}
+
+.clip-chamfer-lg {
+  clip-path: polygon(
+    22px 0,
+    100% 0,
+    100% calc(100% - 22px),
+    calc(100% - 22px) 100%,
+    0 100%,
+    0 22px
+  );
+}
+
+/* Glassmorphic HUD Panel Surface */
+.hud-panel-surface {
+  background-color: rgba(7, 19, 29, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Laser-Scan Hover Sweep on Project Construct Cards */
+@keyframes laser-scan-sweep {
+  0% {
+    top: -12%;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    top: 108%;
+    opacity: 0;
+  }
+}
+
+.laser-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  top: -12%;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 240, 255, 0.35) 15%,
+    #00f0ff 50%,
+    rgba(0, 240, 255, 0.35) 85%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 14px rgba(0, 240, 255, 0.85),
+    0 10px 24px rgba(0, 240, 255, 0.25);
+  z-index: 20;
+}
+
+.group:hover .laser-scan-line,
+.group:focus-within .laser-scan-line {
+  animation: laser-scan-sweep 1.35s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+
+/* Subtle Perspective Grid Animation */
+@keyframes grid-travel {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 0 56px, 0 56px;
+  }
+}
+
+.tron-perspective-plane {
+  background-size: 56px 56px;
+  background-image:
+    linear-gradient(to right, rgba(0, 240, 255, 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 255, 0.22) 1px, transparent 1px);
+  animation: grid-travel 3.2s linear infinite;
+}
+
+/* Reduced Motion Respect */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .tron-perspective-plane {
+    animation: none !important;
+  }
+
+  .group:hover .laser-scan-line,
+  .group:focus-within .laser-scan-line {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
