@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Terminal } from 'lucide-react';
+import { Disc } from 'lucide-react';
 
 export const BOOT_STORAGE_KEY = 'tron_portfolio_booted_v1';
 
 const BOOT_LINES = [
-  '> INITIALIZING GRID...',
-  '> AUTHENTICATING USER: J.M. MAURICIO...',
-  '> ACCESS GRANTED',
+  '> Initializing Grid Interface...',
+  '> Authenticating: John Mathew B. Mauricio',
+  '> System Ready',
 ] as const;
 
 interface BootSequenceProps {
@@ -49,9 +49,9 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
 
     window.addEventListener('keydown', handleKeyDown);
 
-    const t1 = window.setTimeout(() => setVisibleLineCount(2), 550);
-    const t2 = window.setTimeout(() => setVisibleLineCount(3), 1150);
-    const t3 = window.setTimeout(() => finishBoot(), 1950);
+    const t1 = window.setTimeout(() => setVisibleLineCount(2), 450);
+    const t2 = window.setTimeout(() => setVisibleLineCount(3), 950);
+    const t3 = window.setTimeout(() => finishBoot(), 1550);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -69,55 +69,38 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
           aria-modal="true"
           aria-label="System boot sequence"
           initial={{ opacity: 1 }}
-          exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.02 }}
-          transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#02060B] px-4"
+          exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.01 }}
+          transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#07101B]/95 px-4 backdrop-blur-md"
         >
-          {/* Background Subtle Grid */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                'linear-gradient(to right, rgba(0,240,255,0.16) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,240,255,0.16) 1px, transparent 1px)',
-              backgroundSize: '48px 48px',
-            }}
-          />
-
-          <div className="relative w-full max-w-xl p-[1px] clip-chamfer bg-[#00F0FF]/45 shadow-neon-cyan">
-            <div className="clip-chamfer hud-panel-surface bg-[#07131D]/95 p-4 sm:p-8">
-              {/* Top Bar */}
-              <div className="mb-6 flex items-center justify-between gap-2 border-b border-[#00F0FF]/25 pb-3">
-                <div className="flex items-center gap-2 text-[#00F0FF]">
-                  <Terminal className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  <span className="font-display text-[11px] font-bold uppercase tracking-wider sm:text-xs sm:tracking-widest">
-                    GRID_BOOT_LOADER // v2.6
+          <div className="relative w-full max-w-lg p-[1px] clip-chamfer bg-[#38D9F5]/30 shadow-neon-cyan">
+            <div className="clip-chamfer hud-panel-surface bg-[#0D1928]/95 p-5 sm:p-7">
+              <div className="mb-5 flex items-center justify-between gap-2 border-b border-[#38D9F5]/18 pb-3.5">
+                <div className="flex items-center gap-2.5 text-[#7CE7FA]">
+                  <Disc className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span className="font-display text-xs font-semibold tracking-wider">
+                    J.M. Mauricio · Portfolio
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={finishBoot}
-                  className="min-h-[44px] min-w-[72px] shrink-0 border border-[#00F0FF]/50 bg-[#00F0FF]/10 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-widest text-[#00F0FF] transition-colors duration-150 hover:bg-[#00F0FF] hover:text-[#02060B]"
+                  className="min-h-[40px] shrink-0 border border-[#38D9F5]/35 bg-[#38D9F5]/10 px-3.5 py-1.5 font-sans text-xs font-medium text-[#E6F4FA] transition-colors duration-150 hover:bg-[#38D9F5] hover:text-[#07101B] clip-chamfer-sm"
                 >
-                  [SKIP]
+                  Skip
                 </button>
               </div>
 
-              {/* Terminal Telemetry Output */}
-              <div className="space-y-3 font-mono text-sm sm:text-base" aria-live="polite">
+              <div className="space-y-2.5 font-mono text-sm" aria-live="polite">
                 {BOOT_LINES.slice(0, visibleLineCount).map((line, index) => {
-                  const isGranted = index === 2;
+                  const isReady = index === 2;
                   return (
                     <motion.p
                       key={line}
-                      initial={prefersReducedMotion ? false : { opacity: 0, x: -8 }}
+                      initial={prefersReducedMotion ? false : { opacity: 0, x: -6 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.18 }}
-                      className={
-                        isGranted
-                          ? 'font-bold tracking-wider text-[#00F0FF] drop-shadow-neon-cyan'
-                          : 'text-[#E2F1F8]'
-                      }
+                      transition={{ duration: 0.16 }}
+                      className={isReady ? 'font-medium text-[#38D9F5]' : 'text-[#E2EDF5]'}
                     >
                       {line}
                     </motion.p>
@@ -125,19 +108,14 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
                 })}
               </div>
 
-              {/* Progress Bar */}
-              <div className="mt-6">
-                <div className="h-1.5 w-full overflow-hidden bg-[#02060B] border border-[#00F0FF]/25">
+              <div className="mt-5">
+                <div className="h-1 w-full overflow-hidden rounded-full bg-[#07101B]">
                   <motion.div
-                    initial={{ width: '12%' }}
+                    initial={{ width: '15%' }}
                     animate={{ width: `${(visibleLineCount / BOOT_LINES.length) * 100}%` }}
-                    transition={{ duration: 0.35, ease: 'easeOut' }}
-                    className="h-full bg-[#00F0FF] shadow-[0_0_12px_rgba(0,240,255,0.85)]"
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className="h-full bg-[#38D9F5]"
                   />
-                </div>
-                <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-wider text-[#8BAEC4] sm:text-[11px]">
-                  <span>NODE: ZAMBOANGA_PH</span>
-                  <span>PRESS [ESC] OR CLICK [SKIP]</span>
                 </div>
               </div>
             </div>

@@ -26,21 +26,17 @@ export function ChamferCard({
   const borderShellColors =
     accent === 'orange'
       ? interactive
-        ? 'bg-[#FF6B00]/35 hover:bg-[#FF6B00]/75 focus-within:bg-[#FF6B00]/75 hover:shadow-neon-orange'
-        : 'bg-[#FF6B00]/35'
+        ? 'bg-[#FB923C]/25 hover:bg-[#FB923C]/50 focus-within:bg-[#FB923C]/50 hover:shadow-neon-orange'
+        : 'bg-[#FB923C]/22'
       : interactive
-        ? 'bg-[#00F0FF]/25 hover:bg-[#00F0FF]/70 focus-within:bg-[#00F0FF]/70 hover:shadow-neon-cyan'
-        : 'bg-[#00F0FF]/25';
+        ? 'bg-[#38D9F5]/16 hover:bg-[#38D9F5]/40 focus-within:bg-[#38D9F5]/40 hover:shadow-neon-cyan'
+        : 'bg-[#38D9F5]/15';
 
-  const bracketColor = accent === 'orange' ? 'border-[#FF6B00]' : 'border-[#00F0FF]';
-  const bracketGlow =
-    accent === 'orange'
-      ? 'shadow-[0_0_10px_rgba(255,107,0,0.6)]'
-      : 'shadow-[0_0_10px_rgba(0,240,255,0.55)]';
+  const bracketColor = accent === 'orange' ? 'border-[#FB923C]/70' : 'border-[#38D9F5]/60';
 
   return (
     <div
-      className={`group relative p-[1px] ${clipClass} ${borderShellColors} transition-all duration-150 ease-snappy ${className}`}
+      className={`group relative p-[1px] ${clipClass} ${borderShellColors} transition-all duration-200 ease-snappy ${className}`}
       {...rest}
     >
       <div
@@ -48,14 +44,14 @@ export function ChamferCard({
       >
         {laserScan && <div className="laser-scan-line" aria-hidden="true" />}
 
-        {/* Top-Right & Bottom-Left HUD Corner Bracket Accents */}
+        {/* Subtle Architectural Corner Accents */}
         <span
           aria-hidden="true"
-          className={`pointer-events-none absolute top-0 right-0 h-3.5 w-3.5 border-t-2 border-r-2 ${bracketColor} ${bracketGlow} opacity-75 transition-opacity duration-150 group-hover:opacity-100`}
+          className={`pointer-events-none absolute top-0 right-0 h-3 w-3 border-t border-r ${bracketColor} opacity-45 transition-opacity duration-200 group-hover:opacity-90`}
         />
         <span
           aria-hidden="true"
-          className={`pointer-events-none absolute bottom-0 left-0 h-3.5 w-3.5 border-b-2 border-l-2 ${bracketColor} ${bracketGlow} opacity-75 transition-opacity duration-150 group-hover:opacity-100`}
+          className={`pointer-events-none absolute bottom-0 left-0 h-3 w-3 border-b border-l ${bracketColor} opacity-45 transition-opacity duration-200 group-hover:opacity-90`}
         />
 
         {children}

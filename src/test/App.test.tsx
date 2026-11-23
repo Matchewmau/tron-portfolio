@@ -1,21 +1,25 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from '../App';
 import { BOOT_STORAGE_KEY } from '../components/layout/BootSequence';
 
-describe('Into the Grid — Tron Portfolio', () => {
+describe('Into the Grid — Refined Tron Portfolio', () => {
   beforeEach(() => {
     sessionStorage.clear();
   });
 
-  it('displays BootSequence on first visit, skips on [SKIP], and persists in sessionStorage', async () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('displays BootSequence on first visit, skips on Skip, and persists in sessionStorage', async () => {
     const { unmount } = render(<App />);
 
     expect(screen.getByRole('dialog', { name: /system boot sequence/i })).toBeInTheDocument();
-    expect(screen.getByText('> INITIALIZING GRID...')).toBeInTheDocument();
+    expect(screen.getByText('> Initializing Grid Interface...')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: '[SKIP]' }));
+    fireEvent.click(screen.getByRole('button', { name: /skip/i }));
 
     await waitFor(() => {
       expect(
@@ -26,36 +30,38 @@ describe('Into the Grid — Tron Portfolio', () => {
 
     unmount();
 
-    // Second render in same session should bypass BootSequence immediately
+    // Second render in same session bypasses BootSequence immediately
     render(<App />);
     expect(
       screen.queryByRole('dialog', { name: /system boot sequence/i })
     ).not.toBeInTheDocument();
   });
 
-  it('renders complete portfolio identity, projects, arsenal, credentials, and navbar controls', () => {
+  it('renders user portrait, projects with cover previews, skills, credentials, and sound toggle', () => {
     sessionStorage.setItem(BOOT_STORAGE_KEY, 'true');
     render(<App />);
 
-    // Identity & Navbar
+    // Portrait & Hero Identity
     expect(
-      screen.getByRole('heading', { name: /JOHN MATHEW B\. MAURICIO/i })
+      screen.getByRole('heading', { name: /John Mathew B\. Mauricio/i })
     ).toBeInTheDocument();
+    expect(screen.getByAltText('John Mathew B. Mauricio')).toBeInTheDocument();
     expect(
       screen.getByText(/Web Developer \| Programmer \| AI Researcher/i)
     ).toBeInTheDocument();
-    expect(screen.getAllByText(/ONLINE \/\/ ZAMBOANGA_PH/i).length).toBeGreaterThan(0);
 
-    // Web Audio Synthesizer toggle starts muted and toggles cleanly
-    const audioBtn = screen.getByRole('button', { name: /enable ui audio synthesizer/i });
+    // Sound Synthesizer toggle starts muted and toggles cleanly
+    const audioBtn = screen.getByRole('button', { name: /enable ui sound effects/i });
     expect(audioBtn).toHaveAttribute('aria-pressed', 'false');
     fireEvent.click(audioBtn);
-    expect(
-      screen.getByRole('button', { name: /mute ui audio synthesizer/i })
-    ).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: /mute ui sound effects/i })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
 
-    // Construct Nodes
+    // Project Cards & Cover Previews
     expect(screen.getByRole('heading', { name: 'HairMixer' })).toBeInTheDocument();
+    expect(screen.getByAltText('HairMixer interface preview')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'PConnect' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'TJ Fitness' })).toBeInTheDocument();
 
@@ -70,12 +76,12 @@ describe('Into the Grid — Tron Portfolio', () => {
     expect(screen.getByText('Chavacano')).toBeInTheDocument();
   });
 
-  it('opens and closes the Interactive Project Case-Study Modal on INSPECT_NODE', async () => {
+  it('opens Case Study Modal with interactive screenshot gallery and navigates slides', async () => {
     sessionStorage.setItem(BOOT_STORAGE_KEY, 'true');
     render(<App />);
 
     const inspectHairMixerBtn = screen.getByRole('button', {
-      name: /inspect node hairmixer/i,
+      name: /view case study for hairmixer/i,
     });
     fireEvent.click(inspectHairMixerBtn);
 
@@ -85,12 +91,24 @@ describe('Into the Grid — Tron Portfolio', () => {
         /HairMixer — AI-Powered Hairstyle Recommendation & Simulation System/i
       )
     ).toBeInTheDocument();
-    expect(within(dialog).getByText(/SYSTEM_ARCHITECTURE_NOTES/i)).toBeInTheDocument();
+    expect(within(dialog).getByText(/Screen 1 of 5/i)).toBeInTheDocument();
+    expect(
+      within(dialog).getByText(/Landing Interface & 3-Step Virtual Try-On Workflow/i)
+    ).toBeInTheDocument();
+
+    // Navigate to next screenshot in gallery
+    fireEvent.click(within(dialog).getByRole('button', { name: /next screenshot/i }));
+    expect(within(dialog).getByText(/Screen 2 of 5/i)).toBeInTheDocument();
+    expect(
+      within(dialog).getByText(/Interactive Style Discovery & Category Filtering/i)
+    ).toBeInTheDocument();
+
+    // Verify architecture notes & metrics
+    expect(within(dialog).getByText(/System Architecture Overview/i)).toBeInTheDocument();
     expect(within(dialog).getByText(/40% Latency Reduction/i)).toBeInTheDocument();
-    expect(within(dialog).getByText(/github\.com\/matchewmau/i)).toBeInTheDocument();
 
     fireEvent.click(
-      within(dialog).getByRole('button', { name: /close project inspection modal/i })
+      within(dialog).getByRole('button', { name: /close project case study modal/i })
     );
 
     await waitFor(() => {
@@ -98,7 +116,7 @@ describe('Into the Grid — Tron Portfolio', () => {
     });
   });
 
-  it('validates CommsUplink (> ENTER_TRANSMISSION) form and copies contact endpoints', async () => {
+  it('validates contact form, copies endpoints, and sends direct email via FormSubmit AJAX', async () => {
     sessionStorage.setItem(BOOT_STORAGE_KEY, 'true');
     const user = userEvent.setup();
     const writeTextMock = vi.fn().mockResolvedValue(undefined);
@@ -106,6 +124,13 @@ describe('Into the Grid — Tron Portfolio', () => {
       configurable: true,
       value: { writeText: writeTextMock },
     });
+
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ success: 'true', message: 'Email sent' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    );
 
     render(<App />);
 
@@ -120,24 +145,37 @@ describe('Into the Grid — Tron Portfolio', () => {
     );
     expect(writeTextMock).toHaveBeenCalledWith('+63 956 628 4039');
 
-    // Submit empty form -> expect validation errors
-    fireEvent.click(screen.getByRole('button', { name: /transmit_message/i }));
-    expect(await screen.findByText(/ERR_SENDER_ID/i)).toBeInTheDocument();
-    expect(screen.getByText(/ERR_RETURN_CHANNEL/i)).toBeInTheDocument();
-    expect(screen.getByText(/ERR_EMPTY_PAYLOAD/i)).toBeInTheDocument();
+    // Submit empty form -> expect friendly validation messages
+    fireEvent.click(screen.getByRole('button', { name: /send message/i }));
+    expect(
+      await screen.findByText(/Please enter your name or organization/i)
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Please enter a valid email address/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Please enter a message of at least 10 characters/i)
+    ).toBeInTheDocument();
 
-    // Fill valid transmission & submit
-    await user.type(screen.getByLabelText(/SENDER_ID/i), 'Flynn Labs');
-    await user.type(screen.getByLabelText(/RETURN_CHANNEL/i), 'flynn@encom.com');
+    // Fill valid message & submit
+    await user.type(screen.getByLabelText(/Your Name/i), 'Flynn Labs');
+    await user.type(screen.getByLabelText(/^Email Address$/i), 'flynn@encom.com');
     await user.type(
-      screen.getByLabelText(/TRANSMISSION_PAYLOAD/i),
+      screen.getByLabelText(/^Message$/i),
       'Interested in collaborating on computer vision and full-stack architecture.'
     );
 
-    await user.click(screen.getByRole('button', { name: /transmit_message/i }));
+    await user.click(screen.getByRole('button', { name: /send message/i }));
 
-    expect(
-      await screen.findByText(/Transmission Payload Verified/i, {}, { timeout: 2000 })
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/Thank You — Message Sent!/i)).toBeInTheDocument();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://formsubmit.co/ajax/johnmathewmau%40gmail.com',
+      expect.objectContaining({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      })
+    );
   });
 });

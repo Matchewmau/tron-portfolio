@@ -17,19 +17,19 @@ export function NeonBadge({
   const isOrange = accent === 'orange';
 
   const styles = isOrange
-    ? 'border-[#FF6B00]/65 bg-[#FF6B00]/15 text-[#FF6B00] shadow-[0_0_15px_rgba(255,107,0,0.28)]'
-    : 'border-[#00F0FF]/40 bg-[#00F0FF]/10 text-[#00F0FF] shadow-[0_0_12px_rgba(0,240,255,0.2)]';
+    ? 'border-[#FB923C]/40 bg-[#FB923C]/12 text-[#FDBA74]'
+    : 'border-[#38D9F5]/28 bg-[#38D9F5]/10 text-[#7CE7FA]';
 
-  const dotColor = isOrange ? 'bg-[#FF6B00]' : 'bg-[#00F0FF]';
+  const dotColor = isOrange ? 'bg-[#FB923C]' : 'bg-[#38D9F5]';
 
   return (
     <span
-      className={`inline-flex items-center gap-2 border px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider clip-chamfer-sm ${styles} ${className}`}
+      className={`inline-flex items-center gap-2 border px-3 py-1 font-mono text-xs font-medium tracking-wide clip-chamfer-sm ${styles} ${className}`}
     >
       {pulse && (
         <span className="relative flex h-2 w-2" aria-hidden="true">
           <span
-            className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${dotColor}`}
+            className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-65 ${dotColor}`}
           />
           <span className={`relative inline-flex h-2 w-2 rounded-full ${dotColor}`} />
         </span>

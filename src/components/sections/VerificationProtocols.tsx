@@ -13,53 +13,53 @@ export function VerificationProtocols() {
     <section
       id="credentials"
       aria-labelledby="credentials-heading"
-      className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
+      className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8"
     >
       <div id="credentials-heading">
         <SectionHeader
           indexCode="03"
-          protocol="VERIFICATION_PROTOCOLS"
-          title="Education, Eligibility & Credentials"
-          subtitle="Academic foundation in Computer Science paired with Philippine Civil Service Professional Eligibility and international AI conference publication."
+          protocol="Education & Credentials"
+          title="Academic Background & Certifications"
+          subtitle="Computer Science degree combined with Philippine Civil Service Professional Eligibility and international research publication."
         />
       </div>
 
       <div className="grid grid-cols-1 gap-7 lg:grid-cols-12">
-        {/* Left Column: Academic Node & Spoken Languages */}
+        {/* Left Column: Education & Languages */}
         <motion.div
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+          transition={{ duration: 0.38, ease: [0.23, 1, 0.32, 1] }}
           className="flex flex-col gap-6 lg:col-span-5"
         >
-          {/* Academic Degree Card */}
+          {/* Academic Degree */}
           <ChamferCard accent="cyan" innerClassName="p-6">
             <div className="mb-4 flex items-center justify-between">
-              <NeonBadge accent="cyan">// ACADEMIC_DEGREE</NeonBadge>
-              <GraduationCap className="h-5 w-5 text-[#00F0FF]" aria-hidden="true" />
+              <NeonBadge accent="cyan">Education</NeonBadge>
+              <GraduationCap className="h-5 w-5 text-[#7CE7FA]" aria-hidden="true" />
             </div>
 
-            <h3 className="font-display text-lg font-bold uppercase leading-snug tracking-widest text-[#E2F1F8]">
+            <h3 className="font-display text-lg font-semibold leading-snug tracking-wide text-[#F1F6FA]">
               {education.degree}
             </h3>
-            <p className="mt-2 font-mono text-sm font-bold text-[#00F0FF]">
+            <p className="mt-2 font-sans text-base font-medium text-[#7CE7FA]">
               {education.institution}
             </p>
-            <p className="mt-1 font-mono text-xs text-[#8BAEC4]">
-              {education.period} | {education.location}
+            <p className="mt-1 font-sans text-sm text-[#A3BACB]">
+              {education.period} · {education.location}
             </p>
 
-            <div className="mt-5 border-t border-[#00F0FF]/20 pt-4">
-              <div className="mb-2.5 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-[#E2F1F8]">
-                <BookOpen className="h-3.5 w-3.5 text-[#00F0FF]" aria-hidden="true" />
+            <div className="mt-5 border-t border-[#38D9F5]/15 pt-4">
+              <div className="mb-2.5 flex items-center gap-2 font-sans text-xs font-semibold uppercase tracking-wider text-[#C9DCEB]">
+                <BookOpen className="h-3.5 w-3.5 text-[#38D9F5]" aria-hidden="true" />
                 <span>Relevant Coursework</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {education.coursework.map((course) => (
                   <span
                     key={course}
-                    className="border border-[#00F0FF]/25 bg-[#02060B]/80 px-2.5 py-1 font-mono text-xs text-[#E2F1F8]/90"
+                    className="rounded border border-[#38D9F5]/18 bg-[#07101B]/70 px-2.5 py-1 font-sans text-xs text-[#D5E4F0]"
                   >
                     {course}
                   </span>
@@ -68,27 +68,27 @@ export function VerificationProtocols() {
             </div>
           </ChamferCard>
 
-          {/* Languages & Dialects Card */}
+          {/* Languages & Dialects */}
           <ChamferCard accent="cyan" innerClassName="p-6">
             <div className="mb-4 flex items-center justify-between">
-              <NeonBadge accent="cyan">// LINGUISTIC_PROTOCOLS</NeonBadge>
-              <Globe2 className="h-5 w-5 text-[#00F0FF]" aria-hidden="true" />
+              <NeonBadge accent="cyan">Languages</NeonBadge>
+              <Globe2 className="h-5 w-5 text-[#7CE7FA]" aria-hidden="true" />
             </div>
 
-            <h3 className="font-display text-base font-bold uppercase tracking-widest text-[#E2F1F8]">
-              Languages & Dialects
+            <h3 className="font-display text-base font-semibold tracking-wide text-[#F1F6FA]">
+              Spoken Languages & Dialects
             </h3>
-            <p className="mt-1 font-mono text-xs text-[#8BAEC4]">
-              Multilingual communication across international & regional teams
+            <p className="mt-1 font-sans text-sm text-[#A3BACB]">
+              Fluent communication across international and regional teams
             </p>
 
             <div className="mt-4 grid grid-cols-1 gap-2.5 min-[400px]:grid-cols-2">
               {languages.map((lang) => (
                 <div
                   key={lang}
-                  className="flex items-center gap-2 border border-[#00F0FF]/25 bg-[#02060B]/75 px-3 py-2 font-mono text-xs text-[#E2F1F8] clip-chamfer-sm"
+                  className="flex items-center gap-2.5 rounded border border-[#38D9F5]/18 bg-[#07101B]/70 px-3 py-2 font-sans text-sm text-[#E6F1F8]"
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#00F0FF]" aria-hidden="true" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#38D9F5]" aria-hidden="true" />
                   <span>{lang}</span>
                 </div>
               ))}
@@ -96,7 +96,7 @@ export function VerificationProtocols() {
           </ChamferCard>
         </motion.div>
 
-        {/* Right Column: Verified Certifications & Prestige Highlights */}
+        {/* Right Column: Certifications & Eligibility */}
         <div className="flex flex-col gap-4 lg:col-span-7">
           {certifications.map((cert, index) => {
             const isOrange = cert.accent === 'orange';
@@ -104,12 +104,12 @@ export function VerificationProtocols() {
             return (
               <motion.div
                 key={cert.id}
-                initial={prefersReducedMotion ? false : { opacity: 0, x: 16 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, x: 14 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{
-                  duration: 0.36,
-                  delay: prefersReducedMotion ? 0 : index * 0.07,
+                  duration: 0.35,
+                  delay: prefersReducedMotion ? 0 : index * 0.06,
                   ease: [0.23, 1, 0.32, 1],
                 }}
               >
@@ -132,27 +132,27 @@ export function VerificationProtocols() {
                       </div>
 
                       <h3
-                        className={`font-display text-base font-bold uppercase tracking-wider sm:text-lg ${
-                          isOrange ? 'text-[#FF6B00] drop-shadow-neon-orange' : 'text-[#E2F1F8]'
+                        className={`font-display text-base font-semibold tracking-wide sm:text-lg ${
+                          isOrange ? 'text-[#FED7AA]' : 'text-[#F1F6FA]'
                         }`}
                       >
                         {cert.title}
                       </h3>
 
-                      <p className="mt-1 font-mono text-xs uppercase tracking-wider text-[#8BAEC4]">
-                        ISSUING_AUTHORITY: <span className="text-[#E2F1F8]">{cert.issuer}</span>
+                      <p className="mt-1 font-sans text-sm text-[#A3BACB]">
+                        Issued by <span className="text-[#D8E7F3]">{cert.issuer}</span>
                       </p>
                     </div>
 
-                    <div
-                      className={`self-start border px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest sm:self-center clip-chamfer-sm ${
+                    <span
+                      className={`self-start rounded border px-3 py-1 font-mono text-xs font-medium sm:self-center ${
                         isOrange
-                          ? 'border-[#FF6B00]/60 bg-[#FF6B00]/15 text-[#FF6B00]'
-                          : 'border-[#00F0FF]/35 bg-[#00F0FF]/10 text-[#00F0FF]'
+                          ? 'border-[#FB923C]/40 bg-[#FB923C]/12 text-[#FDBA74]'
+                          : 'border-[#38D9F5]/28 bg-[#38D9F5]/10 text-[#7CE7FA]'
                       }`}
                     >
-                      VERIFIED
-                    </div>
+                      Verified
+                    </span>
                   </div>
                 </ChamferCard>
               </motion.div>

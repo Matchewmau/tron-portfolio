@@ -1,17 +1,20 @@
 import { useState, type FormEvent } from 'react';
 import {
-  AlertTriangle,
+  AlertCircle,
   Check,
+  CheckCircle2,
   Copy,
   ExternalLink,
   Github,
+  Loader2,
   Mail,
+  MessageSquare,
   Phone,
   Send,
-  Terminal,
 } from 'lucide-react';
 import { useAudioHud } from '../../context/AudioContext';
 import { portfolioData } from '../../data/portfolioData';
+import { sendDirectPortfolioEmail } from '../../services/emailService';
 import { ChamferButton } from '../ui/ChamferButton';
 import { ChamferCard } from '../ui/ChamferCard';
 import { NeonBadge } from '../ui/NeonBadge';
@@ -32,8 +35,11 @@ export function CommsUplink() {
   const [senderName, setSenderName] = useState('');
   const [senderEmail, setSenderEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [honeypot, setHoneypot] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<'idle' | 'transmitting' | 'sent'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [deliveryFeedback, setDeliveryFeedback] = useState('');
+  const [needsActivation, setNeedsActivation] = useState(false);
   const [copiedField, setCopiedField] = useState<'email' | 'phone' | null>(null);
 
   const handleCopy = async (value: string, field: 'email' | 'phone') => {
@@ -63,19 +69,18 @@ export function CommsUplink() {
   const validate = (): FormErrors => {
     const nextErrors: FormErrors = {};
     if (!senderName.trim() || senderName.trim().length < 2) {
-      nextErrors.senderName = 'ERR_SENDER_ID: Enter your name or organization (min 2 chars).';
+      nextErrors.senderName = 'Please enter your name or organization (at least 2 characters).';
     }
     if (!EMAIL_PATTERN.test(senderEmail.trim())) {
-      nextErrors.senderEmail = 'ERR_RETURN_CHANNEL: Enter a valid email address.';
+      nextErrors.senderEmail = 'Please enter a valid email address.';
     }
     if (!message.trim() || message.trim().length < 10) {
-      nextErrors.message =
-        'ERR_EMPTY_PAYLOAD: Transmission message must contain at least 10 characters.';
+      nextErrors.message = 'Please enter a message of at least 10 characters.';
     }
     return nextErrors;
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -85,20 +90,36 @@ export function CommsUplink() {
     }
 
     setErrors({});
-    setStatus('transmitting');
-    playTransmit();
+    setStatus('sending');
+    setDeliveryFeedback('');
+    setNeedsActivation(false);
 
-    window.setTimeout(() => {
+    const result = await sendDirectPortfolioEmail({
+      recipientEmail: identity.email,
+      senderName,
+      senderEmail,
+      message,
+      honeypot,
+    });
+
+    if (result.ok) {
+      playTransmit();
+      setNeedsActivation(Boolean(result.needsActivation));
+      setDeliveryFeedback(result.statusMessage);
       setStatus('sent');
-    }, 350);
+    } else {
+      playClick();
+      setDeliveryFeedback(result.statusMessage);
+      setStatus('error');
+    }
   };
 
-  const buildMailtoHref = () => {
+  const buildFallbackMailtoHref = () => {
     const subject = encodeURIComponent(
-      `[GRID UPLINK] Inquiry from ${senderName.trim() || 'Prospective Collaborator'}`
+      `Portfolio Inquiry from ${senderName.trim() || 'Prospective Collaborator'}`
     );
     const body = encodeURIComponent(
-      `Sender: ${senderName.trim()}\nReturn Email: ${senderEmail.trim()}\n\n${message.trim()}`
+      `Name: ${senderName.trim()}\nEmail: ${senderEmail.trim()}\n\n${message.trim()}`
     );
     return `mailto:${identity.email}?subject=${subject}&body=${body}`;
   };
@@ -107,99 +128,97 @@ export function CommsUplink() {
     <section
       id="uplink"
       aria-labelledby="uplink-heading"
-      className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
+      className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8"
     >
       <div id="uplink-heading">
         <SectionHeader
           indexCode="04"
-          protocol="COMMS_UPLINK"
-          title="Initiate Direct Transmission"
-          subtitle="Available for Remote/WFH and On-Site software engineering, full-stack web architecture, and AI research collaborations."
+          protocol="Contact"
+          title="Let's Work Together"
+          subtitle="Open to Remote/WFH and On-Site roles in full-stack web development, software engineering, and AI research."
         />
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-        {/* Left Column: Direct Copy Channels & External Launch */}
+        {/* Left Column: Direct Contact Details & Copy Actions */}
         <div className="flex flex-col justify-between gap-6 lg:col-span-5">
           <ChamferCard accent="cyan" innerClassName="p-6">
             <NeonBadge accent="cyan" pulse>
-              // DIRECT_CHANNELS_ACTIVE
+              Direct Contact
             </NeonBadge>
 
-            <h3 className="mt-4 font-display text-lg font-bold uppercase tracking-widest text-[#E2F1F8]">
-              Verified Contact Endpoints
+            <h3 className="mt-4 font-display text-lg font-semibold tracking-wide text-[#F1F6FA]">
+              Reach Out Directly
             </h3>
-            <p className="mt-1.5 font-mono text-xs leading-relaxed text-[#8BAEC4]">
-              Copy endpoint coordinates directly to clipboard or launch an external comms client.
+            <p className="mt-1.5 font-sans text-sm leading-relaxed text-[#A3BACB]">
+              Copy my email or phone number with one click, or send a message straight to my inbox
+              using the form.
             </p>
 
-            {/* Email Endpoint */}
             <div className="mt-6 space-y-4">
-              <div className="border border-[#00F0FF]/30 bg-[#02060B]/80 p-4 clip-chamfer-sm">
+              {/* Email Row */}
+              <div className="rounded border border-[#38D9F5]/20 bg-[#07101B]/75 p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-[#00F0FF]">
+                  <span className="inline-flex items-center gap-2 font-sans text-xs font-medium text-[#7CE7FA]">
                     <Mail className="h-3.5 w-3.5" aria-hidden="true" />
-                    EMAIL_ENDPOINT
+                    Email
                   </span>
                   <button
                     type="button"
                     onMouseEnter={playHover}
                     onClick={() => void handleCopy(identity.email, 'email')}
                     aria-label={`Copy email address ${identity.email}`}
-                    className="inline-flex min-h-[44px] items-center gap-1.5 border border-[#00F0FF]/40 bg-[#00F0FF]/10 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[#00F0FF] transition-colors duration-150 hover:bg-[#00F0FF] hover:text-[#02060B]"
+                    className="inline-flex min-h-[38px] items-center gap-1.5 rounded border border-[#38D9F5]/30 bg-[#38D9F5]/10 px-3 py-1 font-sans text-xs font-medium text-[#E6F4FA] transition-colors duration-150 hover:bg-[#38D9F5] hover:text-[#07101B]"
                   >
                     {copiedField === 'email' ? (
                       <>
                         <Check className="h-3.5 w-3.5" aria-hidden="true" />
-                        <span>COPIED</span>
+                        <span>Copied</span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-3.5 w-3.5" aria-hidden="true" />
-                        <span>COPY</span>
+                        <span>Copy</span>
                       </>
                     )}
                   </button>
                 </div>
-                <p className="mt-2 break-all font-mono text-sm font-medium text-[#E2F1F8]">
+                <p className="mt-1.5 break-all font-mono text-sm text-[#F1F6FA]">
                   {identity.email}
                 </p>
               </div>
 
-              {/* Phone Endpoint */}
-              <div className="border border-[#00F0FF]/30 bg-[#02060B]/80 p-4 clip-chamfer-sm">
+              {/* Phone Row */}
+              <div className="rounded border border-[#38D9F5]/20 bg-[#07101B]/75 p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-[#00F0FF]">
+                  <span className="inline-flex items-center gap-2 font-sans text-xs font-medium text-[#7CE7FA]">
                     <Phone className="h-3.5 w-3.5" aria-hidden="true" />
-                    VOICE_SMS_LINE
+                    Phone
                   </span>
                   <button
                     type="button"
                     onMouseEnter={playHover}
                     onClick={() => void handleCopy(identity.phone, 'phone')}
                     aria-label={`Copy phone number ${identity.phone}`}
-                    className="inline-flex min-h-[44px] items-center gap-1.5 border border-[#00F0FF]/40 bg-[#00F0FF]/10 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[#00F0FF] transition-colors duration-150 hover:bg-[#00F0FF] hover:text-[#02060B]"
+                    className="inline-flex min-h-[38px] items-center gap-1.5 rounded border border-[#38D9F5]/30 bg-[#38D9F5]/10 px-3 py-1 font-sans text-xs font-medium text-[#E6F4FA] transition-colors duration-150 hover:bg-[#38D9F5] hover:text-[#07101B]"
                   >
                     {copiedField === 'phone' ? (
                       <>
                         <Check className="h-3.5 w-3.5" aria-hidden="true" />
-                        <span>COPIED</span>
+                        <span>Copied</span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-3.5 w-3.5" aria-hidden="true" />
-                        <span>COPY</span>
+                        <span>Copy</span>
                       </>
                     )}
                   </button>
                 </div>
-                <p className="mt-2 font-mono text-sm font-medium text-[#E2F1F8]">
-                  {identity.phone}
-                </p>
+                <p className="mt-1.5 font-mono text-sm text-[#F1F6FA]">{identity.phone}</p>
               </div>
             </div>
 
-            {/* Direct Launch Buttons */}
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <ChamferButton
                 href={`mailto:${identity.email}`}
@@ -208,7 +227,7 @@ export function CommsUplink() {
                 className="w-full"
               >
                 <Mail className="h-4 w-4" aria-hidden="true" />
-                <span>LAUNCH_EMAIL</span>
+                <span>Email App</span>
               </ChamferButton>
 
               <ChamferButton
@@ -220,55 +239,56 @@ export function CommsUplink() {
                 className="w-full"
               >
                 <Github className="h-4 w-4" aria-hidden="true" />
-                <span>LAUNCH_GITHUB</span>
+                <span>GitHub</span>
                 <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
               </ChamferButton>
             </div>
           </ChamferCard>
         </div>
 
-        {/* Right Column: Terminal Contact Form (> ENTER_TRANSMISSION) */}
+        {/* Right Column: Direct Email Contact Form */}
         <div className="lg:col-span-7">
-          <ChamferCard accent="cyan" innerClassName="p-5 sm:p-8">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-2 border-b border-[#00F0FF]/25 pb-4">
-              <div className="flex items-center gap-2 text-[#00F0FF]">
-                <Terminal className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <h3 className="font-display text-sm font-bold uppercase tracking-wider sm:text-base sm:tracking-widest">
-                  &gt; ENTER_TRANSMISSION
+          <ChamferCard accent="cyan" innerClassName="p-6 sm:p-8">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-2 border-b border-[#38D9F5]/15 pb-4">
+              <div className="flex items-center gap-2.5 text-[#7CE7FA]">
+                <MessageSquare className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <h3 className="font-display text-base font-semibold tracking-wide text-[#F1F6FA]">
+                  Send a Direct Message
                 </h3>
               </div>
-              <span className="font-mono text-[11px] uppercase tracking-wider text-[#8BAEC4] sm:tracking-widest">
-                ENCRYPTION // TLS_GRID
-              </span>
+              <span className="font-mono text-xs text-[#A3BACB]">Direct Inbox Delivery</span>
             </div>
 
             {status === 'sent' ? (
               <div
                 role="status"
                 aria-live="polite"
-                className="space-y-5 border border-[#00F0FF]/40 bg-[#02060B]/85 p-4 sm:p-6 clip-chamfer-sm"
+                className="space-y-4 rounded border border-[#38D9F5]/30 bg-[#07101B]/85 p-5 sm:p-6"
               >
-                <NeonBadge accent="cyan" pulse>
-                  PACKET_QUEUED // READY_FOR_DISPATCH
+                <NeonBadge accent={needsActivation ? 'orange' : 'cyan'} pulse>
+                  {needsActivation ? 'One-Time Inbox Activation' : 'Message Sent'}
                 </NeonBadge>
-                <p className="font-display text-lg font-bold uppercase tracking-widest text-[#E2F1F8]">
-                  Transmission Payload Verified
-                </p>
-                <p className="font-mono text-xs leading-relaxed text-[#8BAEC4] sm:text-sm">
-                  Message from <span className="text-[#00F0FF]">{senderName}</span> (
-                  <span className="break-all text-[#E2F1F8]">{senderEmail}</span>) has been
-                  formatted. Click <strong className="text-[#00F0FF]">DISPATCH_MAIL_CLIENT</strong>{' '}
-                  below to send directly to{' '}
-                  <span className="break-all text-[#E2F1F8]">{identity.email}</span>, or reset to
-                  compose a new packet.
-                </p>
+
+                <div className="flex items-start gap-3">
+                  <CheckCircle2
+                    className={`mt-0.5 h-5 w-5 shrink-0 ${
+                      needsActivation ? 'text-[#FB923C]' : 'text-[#38D9F5]'
+                    }`}
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <p className="font-display text-lg font-semibold tracking-wide text-[#F1F6FA]">
+                      {needsActivation
+                        ? 'Confirm Form Activation in Your Inbox'
+                        : 'Thank You — Message Sent!'}
+                    </p>
+                    <p className="mt-1.5 font-sans text-sm leading-relaxed text-[#A3BACB]">
+                      {deliveryFeedback}
+                    </p>
+                  </div>
+                </div>
 
                 <div className="flex flex-wrap items-center gap-3 pt-2">
-                  <ChamferButton href={buildMailtoHref()} variant="solid" accent="cyan">
-                    <Send className="h-4 w-4 shrink-0" aria-hidden="true" />
-                    <span>DISPATCH_MAIL_CLIENT</span>
-                  </ChamferButton>
-
                   <ChamferButton
                     type="button"
                     variant="outline"
@@ -277,28 +297,67 @@ export function CommsUplink() {
                       setSenderName('');
                       setSenderEmail('');
                       setMessage('');
+                      setHoneypot('');
+                      setDeliveryFeedback('');
+                      setNeedsActivation(false);
                       setStatus('idle');
                     }}
                   >
-                    <span>NEW_TRANSMISSION</span>
+                    <span>Send Another Message</span>
                   </ChamferButton>
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} noValidate className="space-y-5">
+              <form onSubmit={(e) => void handleSubmit(e)} noValidate className="space-y-5">
+                {/* Hidden Honeypot Field for Automated Bot Spam Protection */}
+                <input
+                  type="text"
+                  name="_honey"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
+                />
+
+                {status === 'error' && (
+                  <div
+                    role="alert"
+                    className="flex flex-col gap-2.5 rounded border border-[#FB923C]/45 bg-[#FB923C]/10 p-4 font-sans text-sm text-[#FED7AA]"
+                  >
+                    <div className="flex items-start gap-2">
+                      <AlertCircle
+                        className="mt-0.5 h-4 w-4 shrink-0 text-[#FB923C]"
+                        aria-hidden="true"
+                      />
+                      <span>{deliveryFeedback}</span>
+                    </div>
+                    <div>
+                      <a
+                        href={buildFallbackMailtoHref()}
+                        className="inline-flex items-center gap-1.5 font-sans text-xs font-semibold text-[#7CE7FA] underline underline-offset-4 hover:text-[#38D9F5]"
+                      >
+                        <Mail className="h-3.5 w-3.5" aria-hidden="true" />
+                        <span>Or click here to send via your default email app</span>
+                      </a>
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  {/* Sender Name */}
                   <div>
                     <label
                       htmlFor="uplink-name"
-                      className="mb-2 block font-mono text-xs font-bold uppercase tracking-wider text-[#00F0FF]"
+                      className="mb-2 block font-sans text-sm font-medium text-[#D5E4F0]"
                     >
-                      SENDER_ID *
+                      Your Name
                     </label>
                     <input
                       id="uplink-name"
                       name="senderName"
                       type="text"
+                      disabled={status === 'sending'}
                       value={senderName}
                       onChange={(e) => {
                         setSenderName(e.target.value);
@@ -306,35 +365,35 @@ export function CommsUplink() {
                           setErrors((prev) => ({ ...prev, senderName: undefined }));
                         }
                       }}
-                      placeholder="e.g. Ada Lovelace / Acme Corp"
+                      placeholder="Jane Doe / Company"
                       aria-invalid={Boolean(errors.senderName)}
                       aria-describedby={errors.senderName ? 'err-uplink-name' : undefined}
-                      className="min-h-[44px] w-full border border-[#00F0FF]/35 bg-[#02060B]/90 px-3.5 py-2.5 font-mono text-sm text-[#E2F1F8] placeholder-[#8BAEC4]/45 transition-colors focus:border-[#00F0FF]"
+                      className="min-h-[44px] w-full rounded border border-[#38D9F5]/25 bg-[#07101B]/90 px-3.5 py-2.5 font-sans text-sm text-[#F1F6FA] placeholder-[#A3BACB]/45 transition-colors focus:border-[#38D9F5] disabled:opacity-60"
                     />
                     {errors.senderName && (
                       <p
                         id="err-uplink-name"
                         role="alert"
-                        className="mt-1.5 flex items-center gap-1.5 font-mono text-xs text-[#FF6B00]"
+                        className="mt-1.5 flex items-center gap-1.5 font-sans text-xs text-[#FDBA74]"
                       >
-                        <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                        <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                         <span>{errors.senderName}</span>
                       </p>
                     )}
                   </div>
 
-                  {/* Return Email */}
                   <div>
                     <label
                       htmlFor="uplink-email"
-                      className="mb-2 block font-mono text-xs font-bold uppercase tracking-wider text-[#00F0FF]"
+                      className="mb-2 block font-sans text-sm font-medium text-[#D5E4F0]"
                     >
-                      RETURN_CHANNEL (EMAIL) *
+                      Email Address
                     </label>
                     <input
                       id="uplink-email"
                       name="senderEmail"
                       type="email"
+                      disabled={status === 'sending'}
                       value={senderEmail}
                       onChange={(e) => {
                         setSenderEmail(e.target.value);
@@ -342,36 +401,36 @@ export function CommsUplink() {
                           setErrors((prev) => ({ ...prev, senderEmail: undefined }));
                         }
                       }}
-                      placeholder="operator@domain.com"
+                      placeholder="you@company.com"
                       aria-invalid={Boolean(errors.senderEmail)}
                       aria-describedby={errors.senderEmail ? 'err-uplink-email' : undefined}
-                      className="min-h-[44px] w-full border border-[#00F0FF]/35 bg-[#02060B]/90 px-3.5 py-2.5 font-mono text-sm text-[#E2F1F8] placeholder-[#8BAEC4]/45 transition-colors focus:border-[#00F0FF]"
+                      className="min-h-[44px] w-full rounded border border-[#38D9F5]/25 bg-[#07101B]/90 px-3.5 py-2.5 font-sans text-sm text-[#F1F6FA] placeholder-[#A3BACB]/45 transition-colors focus:border-[#38D9F5] disabled:opacity-60"
                     />
                     {errors.senderEmail && (
                       <p
                         id="err-uplink-email"
                         role="alert"
-                        className="mt-1.5 flex items-center gap-1.5 font-mono text-xs text-[#FF6B00]"
+                        className="mt-1.5 flex items-center gap-1.5 font-sans text-xs text-[#FDBA74]"
                       >
-                        <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                        <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                         <span>{errors.senderEmail}</span>
                       </p>
                     )}
                   </div>
                 </div>
 
-                {/* Transmission Message */}
                 <div>
                   <label
                     htmlFor="uplink-message"
-                    className="mb-2 block font-mono text-xs font-bold uppercase tracking-wider text-[#00F0FF]"
+                    className="mb-2 block font-sans text-sm font-medium text-[#D5E4F0]"
                   >
-                    TRANSMISSION_PAYLOAD *
+                    Message
                   </label>
                   <textarea
                     id="uplink-message"
                     name="message"
                     rows={5}
+                    disabled={status === 'sending'}
                     value={message}
                     onChange={(e) => {
                       setMessage(e.target.value);
@@ -379,38 +438,45 @@ export function CommsUplink() {
                         setErrors((prev) => ({ ...prev, message: undefined }));
                       }
                     }}
-                    placeholder="Describe role scope, system architecture requirements, or research inquiry..."
+                    placeholder="Tell me about the role, project scope, or research collaboration..."
                     aria-invalid={Boolean(errors.message)}
                     aria-describedby={errors.message ? 'err-uplink-message' : undefined}
-                    className="w-full border border-[#00F0FF]/35 bg-[#02060B]/90 px-3.5 py-3 font-mono text-sm text-[#E2F1F8] placeholder-[#8BAEC4]/45 transition-colors focus:border-[#00F0FF]"
+                    className="w-full rounded border border-[#38D9F5]/25 bg-[#07101B]/90 px-3.5 py-3 font-sans text-sm text-[#F1F6FA] placeholder-[#A3BACB]/45 transition-colors focus:border-[#38D9F5] disabled:opacity-60"
                   />
                   {errors.message && (
                     <p
                       id="err-uplink-message"
                       role="alert"
-                      className="mt-1.5 flex items-center gap-1.5 font-mono text-xs text-[#FF6B00]"
+                      className="mt-1.5 flex items-center gap-1.5 font-sans text-xs text-[#FDBA74]"
                     >
-                      <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                      <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                       <span>{errors.message}</span>
                     </p>
                   )}
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-                  <span className="font-mono text-xs text-[#8BAEC4]">
-                    TARGET: <span className="break-all text-[#00F0FF]">{identity.email}</span>
+                  <span className="font-sans text-xs text-[#A3BACB]">
+                    Delivers to: <span className="break-all text-[#7CE7FA]">{identity.email}</span>
                   </span>
 
                   <ChamferButton
                     type="submit"
                     variant="solid"
                     accent="cyan"
-                    disabled={status === 'transmitting'}
+                    disabled={status === 'sending'}
                   >
-                    <Send className="h-4 w-4" aria-hidden="true" />
-                    <span>
-                      {status === 'transmitting' ? 'ENCRYPTING_PACKET...' : 'TRANSMIT_MESSAGE'}
-                    </span>
+                    {status === 'sending' ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4" aria-hidden="true" />
+                        <span>Send Message</span>
+                      </>
+                    )}
                   </ChamferButton>
                 </div>
               </form>

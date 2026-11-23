@@ -12,6 +12,12 @@ export interface ArchitectureLayer {
   detail: string;
 }
 
+export interface ProjectScreenshot {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
 export interface ConstructProject {
   id: string;
   nodeCode: string;
@@ -22,6 +28,8 @@ export interface ConstructProject {
   role: string;
   stack: string[];
   prestigeBadge?: string;
+  coverImage: string;
+  screenshots: ProjectScreenshot[];
   highlights: string[];
   metrics: ProjectMetric[];
   architectureSummary: string;
@@ -61,6 +69,7 @@ export interface PortfolioData {
     location: string;
     availability: string;
     statusTelemetry: string;
+    portraitUrl: string;
     email: string;
     phone: string;
     githubUrl: string;

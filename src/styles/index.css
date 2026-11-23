@@ -3,21 +3,21 @@
 @tailwind utilities;
 
 :root {
-  --grid-void: #02060b;
-  --grid-panel: rgba(7, 19, 29, 0.75);
-  --grid-cyan: #00f0ff;
-  --grid-cyan-border: rgba(0, 240, 255, 0.25);
-  --grid-orange: #ff6b00;
-  --grid-orange-border: rgba(255, 107, 0, 0.4);
-  --grid-text: #e2f1f8;
-  --grid-muted: #8baec4;
+  --grid-void: #07101b;
+  --grid-panel: rgba(13, 25, 40, 0.72);
+  --grid-cyan: #38d9f5;
+  --grid-cyan-border: rgba(56, 217, 245, 0.18);
+  --grid-orange: #fb923c;
+  --grid-orange-border: rgba(251, 146, 60, 0.32);
+  --grid-text: #f1f6fa;
+  --grid-muted: #a3bacb;
 }
 
 @layer base {
   html {
     background-color: var(--grid-void);
     color: var(--grid-text);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     scroll-padding-top: 5.5rem;
   }
 
@@ -26,6 +26,7 @@
     color: var(--grid-text);
     min-height: 100vh;
     overflow-x: hidden;
+    line-height: 1.65;
   }
 
   *:focus-visible {
@@ -34,26 +35,48 @@
   }
 }
 
-/* Custom Scrollbar */
+/* Soft Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #02060b;
-  border-left: 1px solid rgba(0, 240, 255, 0.12);
+  background: #07101b;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 240, 255, 0.35);
+  background: rgba(56, 217, 245, 0.25);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 240, 255, 0.7);
+  background: rgba(56, 217, 245, 0.5);
 }
 
-/* Signature 45-degree Chamfered Geometry */
+/* Softer, Refined 45-Degree Architectural Chamfer Geometry */
 .clip-chamfer {
+  clip-path: polygon(
+    12px 0,
+    100% 0,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    0 100%,
+    0 12px
+  );
+}
+
+.clip-chamfer-sm {
+  clip-path: polygon(
+    8px 0,
+    100% 0,
+    100% calc(100% - 8px),
+    calc(100% - 8px) 100%,
+    0 100%,
+    0 8px
+  );
+}
+
+.clip-chamfer-lg {
   clip-path: polygon(
     16px 0,
     100% 0,
@@ -64,49 +87,27 @@
   );
 }
 
-.clip-chamfer-sm {
-  clip-path: polygon(
-    10px 0,
-    100% 0,
-    100% calc(100% - 10px),
-    calc(100% - 10px) 100%,
-    0 100%,
-    0 10px
-  );
-}
-
-.clip-chamfer-lg {
-  clip-path: polygon(
-    22px 0,
-    100% 0,
-    100% calc(100% - 22px),
-    calc(100% - 22px) 100%,
-    0 100%,
-    0 22px
-  );
-}
-
-/* Glassmorphic HUD Panel Surface */
+/* Soft Frosted Glass HUD Surface */
 .hud-panel-surface {
-  background-color: rgba(7, 19, 29, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(13, 25, 40, 0.74);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-/* Laser-Scan Hover Sweep on Project Construct Cards */
+/* Gentle Laser-Scan Hover Sweep on Project Cards */
 @keyframes laser-scan-sweep {
   0% {
-    top: -12%;
+    top: -10%;
     opacity: 0;
   }
-  12% {
-    opacity: 1;
+  15% {
+    opacity: 0.75;
   }
-  88% {
-    opacity: 1;
+  85% {
+    opacity: 0.75;
   }
   100% {
-    top: 108%;
+    top: 106%;
     opacity: 0;
   }
 }
@@ -115,45 +116,42 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 2px;
-  top: -12%;
+  height: 1.5px;
+  top: -10%;
   opacity: 0;
   pointer-events: none;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(0, 240, 255, 0.35) 15%,
-    #00f0ff 50%,
-    rgba(0, 240, 255, 0.35) 85%,
+    rgba(56, 217, 245, 0.25) 20%,
+    rgba(56, 217, 245, 0.85) 50%,
+    rgba(56, 217, 245, 0.25) 80%,
     transparent 100%
   );
-  box-shadow:
-    0 0 14px rgba(0, 240, 255, 0.85),
-    0 10px 24px rgba(0, 240, 255, 0.25);
+  box-shadow: 0 0 12px rgba(56, 217, 245, 0.45);
   z-index: 20;
 }
 
-.group:hover .laser-scan-line,
-.group:focus-within .laser-scan-line {
-  animation: laser-scan-sweep 1.35s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+.group:hover .laser-scan-line {
+  animation: laser-scan-sweep 2.1s cubic-bezier(0.23, 1, 0.32, 1) infinite;
 }
 
-/* Subtle Perspective Grid Animation */
+/* Calm, Low-Distraction Perspective Horizon Grid */
 @keyframes grid-travel {
   0% {
     background-position: 0 0, 0 0;
   }
   100% {
-    background-position: 0 56px, 0 56px;
+    background-position: 0 64px, 0 64px;
   }
 }
 
 .tron-perspective-plane {
-  background-size: 56px 56px;
+  background-size: 64px 64px;
   background-image:
-    linear-gradient(to right, rgba(0, 240, 255, 0.22) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 240, 255, 0.22) 1px, transparent 1px);
-  animation: grid-travel 3.2s linear infinite;
+    linear-gradient(to right, rgba(56, 217, 245, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 217, 245, 0.1) 1px, transparent 1px);
+  animation: grid-travel 6s linear infinite;
 }
 
 /* Reduced Motion Respect */
@@ -166,8 +164,7 @@
     animation: none !important;
   }
 
-  .group:hover .laser-scan-line,
-  .group:focus-within .laser-scan-line {
+  .group:hover .laser-scan-line {
     animation: none !important;
     opacity: 0 !important;
   }

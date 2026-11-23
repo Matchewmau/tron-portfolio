@@ -12,11 +12,11 @@ export function LightCycleRail() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-x-0 top-0 z-50 h-[3px] bg-[#07131D]/80"
+      className="pointer-events-none fixed inset-x-0 top-0 z-50 h-[2.5px] bg-[#0D1928]/70"
     >
       <motion.div
         style={{ scaleX: prefersReducedMotion ? scrollYProgress : smoothProgress }}
-        className="h-full w-full origin-left bg-gradient-to-r from-[#00F0FF]/65 via-[#00F0FF] to-[#E2F1F8] shadow-[0_0_16px_rgba(0,240,255,0.95)]"
+        className="h-full w-full origin-left bg-gradient-to-r from-[#38D9F5]/55 via-[#38D9F5] to-[#BDF3FD] shadow-[0_0_12px_rgba(56,217,245,0.65)]"
       />
     </div>
   );
