@@ -1,20 +1,22 @@
-# INTO THE GRID — John Mathew B. Mauricio Portfolio
+# John Mathew B. Mauricio — Developer & AI Researcher Portfolio
 
-Production developer portfolio inspired by the **Tron: Legacy ("Into the Grid")** HUD aesthetic, engineered with **React 18, TypeScript, Tailwind CSS, Framer Motion, Lucide React, and the Web Audio API**.
+**Live Portfolio:** [https://matchewmau.github.io/tron-portfolio/](https://matchewmau.github.io/tron-portfolio/)
 
-## Key Features
-- **3D Perspective Horizon Grid:** Mouse-reactive receding neon-cyan floor grid powered by Framer Motion springs (`prefers-reduced-motion` aware).
-- **Chamfered HUD Architecture:** Crisp 45-degree angled borders (`clip-path`), glassmorphic slate surfaces, laser-scan hover sweeps, and purposeful color hierarchy (`#00F0FF` User Cyan vs `#FF6B00` Rinzler Prestige Amber-Orange).
-- **Zero-Dependency Web Audio Synth:** Optional procedural UI click/hover/transmission synthesizer (`useTronAudio`), muted by default.
-- **Interactive Case-Study Inspector:** Detailed HUD modal (`INSPECT_NODE`) showcasing system architecture layers and quantified performance metrics (**HairMixer ECAI 2026**, **PConnect**, **TJ Fitness**).
-- **Skippable Terminal Boot & Uplink:** 2-second `sessionStorage`-cached boot loader and validated `> ENTER_TRANSMISSION` contact terminal with one-click clipboard copy.
+Developer portfolio inspired by a refined **Tron: Legacy ("Into the Grid")** glass aesthetic, built with **React 18, TypeScript, Tailwind CSS, Framer Motion, Lucide React, and the Web Audio API**.
 
-## Commands
+## Highlights
+- **Readable, Soft-Glass Aesthetic:** Pairs **Plus Jakarta Sans** body typography with **Orbitron** display headings and **JetBrains Mono** technical badges over a calm midnight-slate perspective horizon grid (`prefers-reduced-motion` aware).
+- **Interactive Identity Disc Portrait:** Dual counter-rotating SVG rings framing a studio-vignetted portrait medallion.
+- **Project Case Studies & Screenshot Galleries:** Interactive case-study modal with multi-screen carousel, keyboard arrow navigation, system architecture layers, and quantified outcomes for **HairMixer (ECAI 2026)**, **PConnect**, and **TJ Fitness**.
+- **Direct Inbox Contact Form:** Zero-key **FormSubmit AJAX** integration (`src/services/emailService.ts`) with honeypot spam protection, validation, and one-click clipboard copy for email and phone.
+- **Automated CI/CD:** GitHub Actions workflow (`.github/workflows/deploy.yml`) builds, type-checks, and deploys automatically to GitHub Pages on every push to `main`.
+
+## Local Development
 
 ```bash
 npm install      # Install dependencies
 npm run dev      # Start local Vite dev server
-npm run test     # Run Vitest suite
+npm run test     # Run Vitest test suite
 npm run build    # Type-check & build production bundle
 npm run preview  # Preview production build locally
 ```
