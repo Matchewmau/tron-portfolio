@@ -1,4 +1,5 @@
-import { Disc, Github, Mail } from 'lucide-react';
+import { Github, Mail } from 'lucide-react';
+import tronDiscImg from '../../assets/tron-disc-clean.png';
 import { portfolioData } from '../../data/portfolioData';
 
 export function HudFooter() {
@@ -8,7 +9,12 @@ export function HudFooter() {
     <footer className="relative z-10 border-t border-[#38D9F5]/15 bg-[#07101B]/90 py-8 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6 lg:px-8">
         <div className="flex items-center gap-2.5 text-center sm:text-left">
-          <Disc className="h-4 w-4 shrink-0 text-[#38D9F5]" aria-hidden="true" />
+          <img
+            src={tronDiscImg}
+            alt=""
+            aria-hidden="true"
+            className="h-5 w-5 shrink-0 object-contain"
+          />
           <p className="font-sans text-sm text-[#A3BACB]">
             &copy; {new Date().getFullYear()}{' '}
             <span className="font-medium text-[#F1F6FA]">{identity.fullName}</span> · Zamboanga

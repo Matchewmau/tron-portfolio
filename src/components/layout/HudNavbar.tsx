@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Disc, Menu, Volume2, VolumeX, X } from 'lucide-react';
+import { Menu, Volume2, VolumeX, X } from 'lucide-react';
+import tronDiscImg from '../../assets/tron-disc-clean.png';
 import { useAudioHud } from '../../context/AudioContext';
 import { portfolioData } from '../../data/portfolioData';
 
@@ -23,16 +24,19 @@ export function HudNavbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-[#38D9F5]/15 bg-[#0A1523]/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        {/* Brand Identity */}
+        {/* Brand Identity with Authentic Tron Disc Emblem */}
         <a
           href="#identity"
           onMouseEnter={playHover}
           onClick={handleNavClick}
           className="group flex min-h-[44px] items-center gap-3"
         >
-          <span className="flex h-9 w-9 items-center justify-center border border-[#38D9F5]/30 bg-[#38D9F5]/10 text-[#38D9F5] transition-transform duration-150 group-hover:scale-105 clip-chamfer-sm">
-            <Disc className="h-4 w-4" aria-hidden="true" />
-          </span>
+          <img
+            src={tronDiscImg}
+            alt=""
+            aria-hidden="true"
+            className="h-9 w-9 shrink-0 object-contain transition-transform duration-300 group-hover:rotate-45 group-hover:scale-105"
+          />
           <div className="flex flex-col">
             <span className="font-display text-xs font-semibold tracking-wider text-[#F1F6FA] group-hover:text-[#38D9F5] sm:text-sm">
               J.M. Mauricio

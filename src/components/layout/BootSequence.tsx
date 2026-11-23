@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Disc } from 'lucide-react';
+import tronDiscImg from '../../assets/tron-disc-clean.png';
 
 export const BOOT_STORAGE_KEY = 'tron_portfolio_booted_v1';
 
@@ -77,7 +77,12 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
             <div className="clip-chamfer hud-panel-surface bg-[#0D1928]/95 p-5 sm:p-7">
               <div className="mb-5 flex items-center justify-between gap-2 border-b border-[#38D9F5]/18 pb-3.5">
                 <div className="flex items-center gap-2.5 text-[#7CE7FA]">
-                  <Disc className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <img
+                    src={tronDiscImg}
+                    alt=""
+                    aria-hidden="true"
+                    className="h-6 w-6 shrink-0 object-contain"
+                  />
                   <span className="font-display text-xs font-semibold tracking-wider">
                     J.M. Mauricio · Portfolio
                   </span>
